@@ -16,6 +16,7 @@ type application struct {
 	snippets *models.SnippetModel
 }
 
+
 func main() {
 
 	addr := flag.String("addr", ":4000", "HTTP network adress")

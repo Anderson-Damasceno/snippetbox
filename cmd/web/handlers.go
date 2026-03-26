@@ -64,9 +64,9 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 
 	//fmt.Fprintf(w, "%+v", snippet)
 	files := []string{
-		"../../ui/html/base.tmpl",
-		"../../ui/html/partials/nav.tmpl",
-		"../../ui/html/pages/view.tmpl",
+		"ui/html/base.tmpl",
+		"ui/html/partials/nav.tmpl",
+		"ui/html/pages/view.tmpl",
 	}
 
 	ts, err := template.ParseFiles(files...)
@@ -75,7 +75,9 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", snippet)
+	data := &templateData{Snippet: snippet}
+
+	err = ts.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		app.serverError(w, err)
 	}
@@ -92,15 +94,14 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	title := "O snail"
- 	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n– Kobayashi Issa"
-	expires := 7	
+	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n– Kobayashi Issa"
+	expires := 7
 
 	id, err := app.snippets.Insert(title, content, expires)
-	if err != nil{
+	if err != nil {
 		app.serverError(w, err)
 		return
-	} 
-	
+	}
+
 	http.Redirect(w, r, fmt.Sprintf("/snippet/view?id=%d", id), http.StatusSeeOther)
 }
-
