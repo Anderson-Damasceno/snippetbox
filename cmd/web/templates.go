@@ -4,4 +4,5 @@ import "github.com/Anderson-Damasceno/snippetbox/internal/models"
 
 type templateData struct {
 	Snippet *models.Snippet
+	Snippets []*models.Snippet
 }
