@@ -3,23 +3,25 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
+
 	"github.com/Anderson-Damasceno/snippetbox/internal/models"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type application struct {
-	errorLog *log.Logger
-	infoLog *log.Logger
-	snippets *models.SnippetModel
+	errorLog      *log.Logger
+	infoLog       *log.Logger
+	snippets      *models.SnippetModel
+	templateCache map[string]*template.Template
 }
-
 
 func main() {
 
-	addr := flag.String("addr", ":4000", "HTTP network adress")
+	addr := flag.String("addr", ":4000", "HTTP network address")
 
 	dsn := flag.String("dsn", "web:1532@/snippetbox?parseTime=true", "MySQL data source name")
 	flag.Parse()
@@ -34,17 +36,22 @@ func main() {
 
 	defer db.Close()
 
-	app := &application{
-		errorLog: errorLog,
-		infoLog: infoLog,
-		snippets: &models.SnippetModel{DB: db},
+	templateCache, err := newTemplateCache()
+	if err != nil {
+		errorLog.Fatal(err)
 	}
 
+	app := &application{
+		errorLog:      errorLog,
+		infoLog:       infoLog,
+		snippets:      &models.SnippetModel{DB: db},
+		templateCache: templateCache,
+	}
 
 	srv := &http.Server{
-		Addr: *addr,
+		Addr:     *addr,
 		ErrorLog: errorLog,
-		Handler: app.routes(),
+		Handler:  app.routes(),
 	}
 
 	infoLog.Printf("Starting server on %s", *addr)
@@ -54,7 +61,7 @@ func main() {
 }
 
 func openDB(dsn string) (*sql.DB, error) {
-	db, err := sql.Open("mysql",dsn)
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return nil, err
 	}
