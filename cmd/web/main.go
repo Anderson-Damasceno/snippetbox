@@ -52,6 +52,7 @@ func main() {
 	sessionManager := scs.New()
 	sessionManager.Store = mysqlstore.New(db)
 	sessionManager.Lifetime = 12 * time.Hour
+
 	app := &application{
 		errorLog:       errorLog,
 		infoLog:        infoLog,
