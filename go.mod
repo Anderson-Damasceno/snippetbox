@@ -1,6 +1,6 @@
 module github.com/Anderson-Damasceno/snippetbox
 
-go 1.24.0
+go 1.25.0
 
 require github.com/go-sql-driver/mysql v1.10.0
 
@@ -11,4 +11,5 @@ require (
 	github.com/go-playground/form/v4 v4.3.0 // indirect
 	github.com/julienschmidt/httprouter v1.3.0 // indirect
 	github.com/justinas/alice v1.2.0 // indirect
+	golang.org/x/crypto v0.54.0 // indirect
 )
